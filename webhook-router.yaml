@@ -1,0 +1,47 @@
+# Webhook Router Configuration
+# ─────────────────────────────────────────────────────────────
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  log_level: "INFO"
+  cors_origins: ["*"]
+
+signature:
+  enabled: false
+  algorithm: "hmac-sha256"
+  header_name: "X-Signature"
+  secret_env_var: "WEBHOOK_SECRET"
+
+rate_limit:
+  enabled: false
+  requests_per_minute: 100
+  burst_size: 20
+
+routes:
+  - name: "github-push"
+    description: "Route GitHub push events to internal API"
+    filter:
+      event_types: ["push"]
+    transform:
+      strategy: "none"
+    destinations:
+      - name: "api"
+        type: "http"
+        url: "http://localhost:9090/webhooks"
+        method: "POST"
+        timeout: 30.0
+        retry:
+          strategy: "exponential"
+          max_retries: 3
+          base_delay: 1.0
+          max_delay: 30.0
+
+  - name: "all-to-console"
+    description: "Log all webhook events to console"
+    filter: {}
+    transform:
+      strategy: "none"
+    destinations:
+      - name: "debug"
+        type: "console"
