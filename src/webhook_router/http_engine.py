@@ -8,7 +8,7 @@ from typing import Any
 
 import aiohttp
 
-from .models import DestinationConfig, DeliveryResult, RetryConfig, RetryStrategy
+from .models import DestinationConfig, DeliveryResult, RetryStrategy
 
 
 async def deliver_http(

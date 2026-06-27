@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import logging
 import sys
 from pathlib import Path
@@ -10,7 +9,6 @@ from pathlib import Path
 import click
 
 from .config import load_config
-from .models import Config, RouteConfig, FilterConfig, DestinationConfig, DestinationType
 from .server import WebhookServer
 from .__init__ import __version__
 
@@ -168,7 +166,7 @@ def validate(config_path: str) -> None:
         ],
     }
 
-    click.echo(f"Configuration valid ✓")
+    click.echo("Configuration valid ✓")
     click.echo(f"Routes: {summary['total_routes']}")
     for route in summary["routes"]:
         click.echo(f"  - {route['name']}: {len(route['destinations'])} destination(s)")
@@ -203,7 +201,7 @@ def routes(config_path: str) -> None:
         click.echo(f"\nRoute {i}: {route.name}")
         click.echo(f"  Description: {route.description}")
         click.echo(f"  Event types: {', '.join(route.filter.event_types) or 'any'}")
-        click.echo(f"  Destinations:")
+        click.echo("  Destinations:")
         for dest in route.destinations:
             target = dest.url or dest.file_path or "console"
             click.echo(f"    - {dest.name} ({dest.type.value}) → {target}")

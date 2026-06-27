@@ -6,13 +6,11 @@ import asyncio
 import json
 import logging
 import time
-from typing import Any
 
-import aiohttp
 from aiohttp import web
 
 from .config import Config
-from .models import SignatureConfig, WebhookEvent
+from .models import WebhookEvent
 from .router import RouterEngine
 
 logger = logging.getLogger(__name__)
