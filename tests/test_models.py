@@ -2,8 +2,6 @@
 
 import hashlib
 import hmac
-import json
-from pathlib import Path
 
 import pytest
 
@@ -13,16 +11,12 @@ from webhook_router.models import (
     DestinationConfig,
     DestinationType,
     FilterConfig,
-    HttpMethod,
-    RateLimitConfig,
     RetryConfig,
     RetryStrategy,
     RouteConfig,
-    ServerConfig,
     SignatureConfig,
     TransformConfig,
     TransformStrategy,
-    WebhookEvent,
 )
 
 

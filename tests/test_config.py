@@ -7,7 +7,6 @@ import pytest
 import yaml
 
 from webhook_router.config import load_config, load_config_dict
-from webhook_router.models import Config
 
 
 class TestLoadConfig:
