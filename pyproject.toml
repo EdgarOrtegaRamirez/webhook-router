@@ -10,7 +10,7 @@ dependencies = [
     "pyyaml>=6.0.2,<7",
     "aiohttp>=3.11,<4",
     "jinja2>=3.1.4,<4",
-    "cryptography>=44.0.0,<45",
+    "cryptography>=49.0.0",
     "python-dateutil>=2.9,<3",
 ]
 
