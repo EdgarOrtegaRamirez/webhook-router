@@ -26,9 +26,7 @@ routes:
       - name: "dest1"
         type: "console"
 """
-    with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".yaml", delete=False
-    ) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
         f.write(data)
         f.flush()
         yield f.name
@@ -51,9 +49,7 @@ class TestCLI:
         assert "github-events" in result.output
 
     def test_sample_config_to_file(self, runner):
-        with tempfile.NamedTemporaryFile(
-            suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False) as f:
             output_path = f.name
 
         try:

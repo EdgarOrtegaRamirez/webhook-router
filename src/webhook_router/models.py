@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field, field_validator
 
 # ── Enums ──────────────────────────────────────────────────────────────
 
+
 class DestinationType(str, Enum):
     HTTP = "http"
     FILE = "file"
@@ -43,6 +44,7 @@ class RetryStrategy(str, Enum):
 
 # ── Config Models ──────────────────────────────────────────────────────
 
+
 class SignatureConfig(BaseModel):
     """Webhook signature verification config."""
 
@@ -70,13 +72,12 @@ class SignatureConfig(BaseModel):
 
     def _get_secret(self) -> str | None:
         import os
+
         return os.environ.get(self.secret_env_var)
 
     def _compute_signature(self, secret: str, payload: bytes) -> str:
         if self.algorithm == "hmac-sha256":
-            return hmac.new(
-                secret.encode("utf-8"), payload, hashlib.sha256
-            ).hexdigest()
+            return hmac.new(secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
         raise ValueError(f"Unsupported signature algorithm: {self.algorithm}")
 
 
@@ -128,6 +129,7 @@ class TransformConfig(BaseModel):
 
     def _apply_jinja2(self, payload: dict[str, Any]) -> dict[str, Any]:
         from jinja2 import Template
+
         t = Template(self.template)
         result = t.render(**payload)
         try:
@@ -165,7 +167,7 @@ class RetryConfig(BaseModel):
             return 0.0
         if self.strategy == RetryStrategy.FIXED:
             return min(self.base_delay, self.max_delay)
-        delay = self.base_delay * (2 ** attempt)
+        delay = self.base_delay * (2**attempt)
         return min(delay, self.max_delay)
 
 
@@ -233,6 +235,7 @@ class Config(BaseModel):
 
 
 # ── Runtime Models ─────────────────────────────────────────────────────
+
 
 @dataclass
 class WebhookEvent:

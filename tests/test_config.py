@@ -47,9 +47,7 @@ class TestLoadConfig:
                 }
             ]
         }
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             yaml.dump(data, f)
             f.flush()
             config = load_config(f.name)
@@ -61,9 +59,7 @@ class TestLoadConfig:
             load_config("/nonexistent/path/config.yaml")
 
     def test_load_invalid_yaml(self):
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("{{invalid yaml:::")
             f.flush()
             with pytest.raises(Exception):
@@ -71,9 +67,7 @@ class TestLoadConfig:
         Path(f.name).unlink()
 
     def test_load_non_mapping_yaml(self):
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".yaml", delete=False
-        ) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("- list item\n")
             f.flush()
             with pytest.raises(ValueError, match="mapping"):
@@ -85,9 +79,7 @@ class TestLoadConfig:
             "routes": [
                 {
                     "name": "minimal",
-                    "destinations": [
-                        {"name": "d", "type": "console"}
-                    ],
+                    "destinations": [{"name": "d", "type": "console"}],
                 }
             ]
         }

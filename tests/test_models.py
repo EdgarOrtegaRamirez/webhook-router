@@ -34,12 +34,11 @@ class TestSignatureConfig:
     def test_verify_hmac_sha256(self):
         sig = SignatureConfig(enabled=True, secret_env_var="TEST_SECRET")
         import os
+
         os.environ["TEST_SECRET"] = "mysecret"
         try:
             payload = b"test-payload"
-            expected = hmac.new(
-                b"mysecret", payload, hashlib.sha256
-            ).hexdigest()
+            expected = hmac.new(b"mysecret", payload, hashlib.sha256).hexdigest()
             assert sig.verify(payload, expected)
             assert not sig.verify(payload, "wrong-sig")
         finally:
@@ -48,13 +47,12 @@ class TestSignatureConfig:
     def test_compute_signature(self):
         sig = SignatureConfig(enabled=True, secret_env_var="TEST_SECRET2")
         import os
+
         os.environ["TEST_SECRET2"] = "key123"
         try:
             payload = b"hello"
             sig_str = sig.compute_signature(payload)
-            assert sig_str == hmac.new(
-                b"key123", payload, hashlib.sha256
-            ).hexdigest()
+            assert sig_str == hmac.new(b"key123", payload, hashlib.sha256).hexdigest()
         finally:
             os.environ.pop("TEST_SECRET2", None)
 
@@ -187,12 +185,8 @@ class TestConfigValidation:
         with pytest.raises(ValueError, match="unique"):
             Config(
                 routes=[
-                    RouteConfig(name="same", destinations=[
-                        DestinationConfig(name="d1", type=DestinationType.CONSOLE)
-                    ]),
-                    RouteConfig(name="same", destinations=[
-                        DestinationConfig(name="d2", type=DestinationType.CONSOLE)
-                    ]),
+                    RouteConfig(name="same", destinations=[DestinationConfig(name="d1", type=DestinationType.CONSOLE)]),
+                    RouteConfig(name="same", destinations=[DestinationConfig(name="d2", type=DestinationType.CONSOLE)]),
                 ]
             )
 
@@ -223,64 +217,66 @@ class TestConfigValidation:
         assert config.routes[0].destinations[0].url == "http://example.com"
 
     def test_full_config(self):
-        config = Config.model_validate({
-            "server": {
-                "host": "0.0.0.0",
-                "port": 8080,
-                "log_level": "DEBUG",
-                "cors_origins": ["https://example.com"],
-            },
-            "signature": {
-                "enabled": True,
-                "algorithm": "hmac-sha256",
-                "header_name": "X-Hub-Signature",
-                "secret_env_var": "SIGNING_SECRET",
-            },
-            "rate_limit": {
-                "enabled": True,
-                "requests_per_minute": 60,
-                "burst_size": 10,
-            },
-            "routes": [
-                {
-                    "name": "webhook-route",
-                    "description": "Test route",
-                    "filter": {
-                        "event_types": ["push"],
-                        "headers": {"X-Source": "github"},
-                        "payload_keys": {"action": "opened"},
-                    },
-                    "transform": {
-                        "strategy": "jinja2",
-                        "template": '{"action": "{{ action }}"}',
-                    },
-                    "destinations": [
-                        {
-                            "name": "http-dest",
-                            "type": "http",
-                            "url": "http://localhost:3000/hook",
-                            "method": "POST",
-                            "timeout": 15.0,
-                            "retry": {
-                                "strategy": "exponential",
-                                "max_retries": 3,
-                                "base_delay": 1.0,
-                                "max_delay": 30.0,
+        config = Config.model_validate(
+            {
+                "server": {
+                    "host": "0.0.0.0",
+                    "port": 8080,
+                    "log_level": "DEBUG",
+                    "cors_origins": ["https://example.com"],
+                },
+                "signature": {
+                    "enabled": True,
+                    "algorithm": "hmac-sha256",
+                    "header_name": "X-Hub-Signature",
+                    "secret_env_var": "SIGNING_SECRET",
+                },
+                "rate_limit": {
+                    "enabled": True,
+                    "requests_per_minute": 60,
+                    "burst_size": 10,
+                },
+                "routes": [
+                    {
+                        "name": "webhook-route",
+                        "description": "Test route",
+                        "filter": {
+                            "event_types": ["push"],
+                            "headers": {"X-Source": "github"},
+                            "payload_keys": {"action": "opened"},
+                        },
+                        "transform": {
+                            "strategy": "jinja2",
+                            "template": '{"action": "{{ action }}"}',
+                        },
+                        "destinations": [
+                            {
+                                "name": "http-dest",
+                                "type": "http",
+                                "url": "http://localhost:3000/hook",
+                                "method": "POST",
+                                "timeout": 15.0,
+                                "retry": {
+                                    "strategy": "exponential",
+                                    "max_retries": 3,
+                                    "base_delay": 1.0,
+                                    "max_delay": 30.0,
+                                },
                             },
-                        },
-                        {
-                            "name": "file-dest",
-                            "type": "file",
-                            "file_path": "./logs/webhooks.json",
-                        },
-                        {
-                            "name": "console-dest",
-                            "type": "console",
-                        },
-                    ],
-                }
-            ],
-        })
+                            {
+                                "name": "file-dest",
+                                "type": "file",
+                                "file_path": "./logs/webhooks.json",
+                            },
+                            {
+                                "name": "console-dest",
+                                "type": "console",
+                            },
+                        ],
+                    }
+                ],
+            }
+        )
         assert config.server.port == 8080
         assert config.signature.enabled
         assert config.rate_limit.enabled

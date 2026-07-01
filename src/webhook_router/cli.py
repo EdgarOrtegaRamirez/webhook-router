@@ -128,6 +128,7 @@ def start(config_path: str, host: str | None, port: int | None) -> None:
 
     try:
         import asyncio
+
         asyncio.run(_run())
     except KeyboardInterrupt:
         click.echo("\nShutting down...")
@@ -146,25 +147,29 @@ def validate(config_path: str) -> None:
         click.echo(f"Validation failed: {e}", err=True)
         sys.exit(1)
 
-    summary = config.get_routes_summary() if hasattr(config, "get_routes_summary") else {
-        "total_routes": len(config.routes),
-        "routes": [
-            {
-                "name": r.name,
-                "description": r.description,
-                "event_types": r.filter.event_types,
-                "destinations": [
-                    {
-                        "name": d.name,
-                        "type": d.type.value,
-                        "url": d.url or d.file_path,
-                    }
-                    for d in r.destinations
-                ],
-            }
-            for r in config.routes
-        ],
-    }
+    summary = (
+        config.get_routes_summary()
+        if hasattr(config, "get_routes_summary")
+        else {
+            "total_routes": len(config.routes),
+            "routes": [
+                {
+                    "name": r.name,
+                    "description": r.description,
+                    "event_types": r.filter.event_types,
+                    "destinations": [
+                        {
+                            "name": d.name,
+                            "type": d.type.value,
+                            "url": d.url or d.file_path,
+                        }
+                        for d in r.destinations
+                    ],
+                }
+                for r in config.routes
+            ],
+        }
+    )
 
     click.echo("Configuration valid ✓")
     click.echo(f"Routes: {summary['total_routes']}")

@@ -66,11 +66,7 @@ class WebhookServer:
             payload = {"_raw": raw_body.decode("utf-8", errors="replace")}
 
         # Extract headers (safe subset)
-        headers = {
-            k: v
-            for k, v in request.headers.items()
-            if k.lower() not in ("host", "content-length")
-        }
+        headers = {k: v for k, v in request.headers.items() if k.lower() not in ("host", "content-length")}
 
         # Verify signature if enabled
         if not self._verify_signature(raw_body, request):
@@ -131,10 +127,7 @@ class WebhookServer:
         window = 60.0  # 1 minute
 
         # Clean old tokens
-        self._rate_limit_tokens = [
-            t for t in self._rate_limit_tokens
-            if now - t < window
-        ]
+        self._rate_limit_tokens = [t for t in self._rate_limit_tokens if now - t < window]
 
         limit = self.config.rate_limit.requests_per_minute
         if len(self._rate_limit_tokens) >= limit:
