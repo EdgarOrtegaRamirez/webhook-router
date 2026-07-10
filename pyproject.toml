@@ -3,7 +3,7 @@ name = "webhook-router"
 version = "0.1.0"
 description = "A lightweight CLI tool for routing webhooks to multiple destinations with filtering, transformation, and retry logic"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "click>=8.4.2,<9",
     "pydantic>=2.13.4,<3",
@@ -34,10 +34,10 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 
 [tool.ruff]
-target-version = "py313"
+target-version = "py311"
 line-length = 120
 
 [dependency-groups]
 dev = [
-    "ruff>=0.15.20",
+    "ruff>=0.15.21",
 ]
